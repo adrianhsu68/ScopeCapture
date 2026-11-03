@@ -1,0 +1,15 @@
+ScopeCapture source code: MIT License, copyright 2026 adrianhsu68. See LICENSE.
+
+The Windows package includes unmodified third-party runtime components:
+
+- CPython 3.13.7 and its bundled components: see licenses/Python.txt.
+  https://www.python.org/
+- Tcl/Tk 8.6: see licenses/Tcl.txt and licenses/Tk.txt.
+  https://www.tcl-lang.org/
+- PyInstaller 6.16.0 bootloader and runtime hooks: see licenses/PyInstaller.txt.
+  The PyInstaller license includes a bootloader exception; runtime hooks have
+  their own terms as described in that file.
+  https://pyinstaller.org/
+
+These components retain their own licenses. ScopeCapture does not claim
+ownership of third-party components or the Keysight name and trademarks.

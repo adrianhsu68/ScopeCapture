@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+build/
+release/
+.venv/
+*.spec
+settings.json

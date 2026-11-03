@@ -1,0 +1,54 @@
+ScopeCapture Oscilloscope Capture — Windows 10/11 x64
+
+Getting started
+Copy ScopeCapture.exe to your PC and double-click it. No installer, Python,
+VISA runtime, or Keysight IO Libraries are required on the target computer.
+
+1. Power on the oscilloscope and connect it to a network reachable from the PC.
+2. Open ScopeCapture.exe. Choose English or 繁體中文 at the top right.
+3. Check the subnet and click Find scopes. Click the correct model and serial
+   number in the list. Use the serial number to distinguish identical models.
+   Alternatively, enter the scope's IPv4 address and click Identify & select.
+4. Choose a screenshot folder and a black or white background.
+5. Click Capture screenshot. A color PNG is saved with a timestamp, model, and
+   serial number in its filename. The image opens automatically unless disabled.
+
+Preferences
+The app remembers your language, last selected instrument and IP, subnet,
+save folder, background, and automatic image opening preference.
+Preferences are per Windows user, stored at:
+%LOCALAPPDATA%\ScopeCapture\settings.json
+If an older version already saved a folder, that exact path is kept when you
+switch languages. New installations default to Pictures\ScopeCaptures.
+On first use the app chooses Traditional Chinese for a Chinese system locale,
+otherwise English. Existing preferences without a language retain Chinese.
+
+Supported models and verification
+Keysight EDUX1052A/G, DSOX1202A/G, and DSOX1204A/G.
+DSOX1204A: discovery, capture, black/white backgrounds, and restoration tested
+on hardware. EDUX1052A: confirmed working on hardware by a user. The remaining models use
+the same documented command family, but still await hardware verification. Model support does not imply
+that every model or firmware version has been independently verified.
+Other SCPI instruments may appear in search results but cannot be captured.
+Connection: IPv4, raw SCPI TCP port 5025. USB connections are not implemented.
+
+Background colors
+Black (default) follows the screen colors; white is convenient for printing.
+The app temporarily changes Ink Saver if needed, then restores and verifies
+the original value. It does not change acquisition settings, Run/Stop, or Autoscale.
+If a transfer times out or is incomplete, no further commands are sent. A warning
+explains that Ink Saver may not have been restored; check the instrument panel.
+To capture a particular event, stop the scope using its front panel first.
+
+Troubleshooting
+- Check the scope's IP address in Utility / I/O / LAN on the front panel.
+- Suggested subnets use /24; change this if your network uses another range.
+  Search accepts at most a /22 subnet (1024 addresses).
+- Search covers only the entered subnet. For another reachable subnet, enter
+  its range or use Connect by IP. Firewalls or VLAN isolation may block TCP 5025.
+- A remembered instrument is not proof it is online. Its model and serial are
+  checked on every capture. If DHCP changes its IP, search again and select it.
+- App messages follow the selected language. Native Windows file dialogs follow
+  your Windows language settings. English system errors include a numeric code.
+- This executable is unsigned. If company policy blocks it, ask IT to review it;
+  do not disable security software.
