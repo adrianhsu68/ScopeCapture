@@ -1,5 +1,7 @@
 """Desktop translations. Protocol values and saved paths never depend on language."""
+import ctypes
 import locale
+import sys
 
 LANGUAGES = {"繁體中文": "zh_TW", "English": "en"}
 ENGLISH = {
@@ -82,8 +84,21 @@ _SOURCE = {value: key for key, value in ENGLISH.items()}
 
 
 def default_language():
+    # Windows locale.getlocale() can return names such as
+    # "Chinese (Traditional)_Taiwan", and regional format need not match UI.
+    if sys.platform == "win32":
+        try:
+            get_ui_language = ctypes.windll.kernel32.GetUserDefaultUILanguage
+            get_ui_language.argtypes = []
+            get_ui_language.restype = ctypes.c_ushort  # LANGID
+            language_id = get_ui_language()
+            if language_id:
+                return "zh_TW" if language_id & 0x03ff == 0x04 else "en"
+        except (AttributeError, OSError):
+            pass
     try:
-        return "zh_TW" if (locale.getlocale()[0] or "").lower().startswith("zh") else "en"
+        name = (locale.getlocale()[0] or "").lower()
+        return "zh_TW" if name.startswith(("zh", "chinese")) else "en"
     except (ValueError, TypeError):
         return "en"
 

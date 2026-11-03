@@ -19,7 +19,7 @@
 若 DHCP 更換 IP，重新搜尋並選擇該台儀器即可。
 設定保存在目前 Windows 使用者的 %LOCALAPPDATA%\ScopeCapture\settings.json。
 切換語言不會更改已選擇的資料夾。首次安裝預設存到 Pictures\ScopeCaptures。
-首次使用依系統語言選擇介面；既有設定未記錄語言時保留繁體中文。
+首次使用依 Windows 顯示語言選擇介面（中文使用繁體中文，其餘使用英文）；既有設定未記錄語言時保留繁體中文。
 程式內的提示與錯誤會跟隨介面語言；Windows 原生檔案選擇視窗跟隨系統語言。
 
 支援型號

@@ -20,8 +20,8 @@ Preferences are per Windows user, stored at:
 %LOCALAPPDATA%\ScopeCapture\settings.json
 If an older version already saved a folder, that exact path is kept when you
 switch languages. New installations default to Pictures\ScopeCaptures.
-On first use the app chooses Traditional Chinese for a Chinese system locale,
-otherwise English. Existing preferences without a language retain Chinese.
+On first use the app reads your Windows display language: Chinese selects
+Traditional Chinese, and other display languages select English. Existing preferences without a language retain Chinese.
 
 Supported models and verification
 Keysight EDUX1052A/G, DSOX1202A/G, and DSOX1204A/G.

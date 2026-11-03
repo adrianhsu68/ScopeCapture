@@ -7,10 +7,47 @@ import unittest
 from unittest.mock import patch
 
 from scopecapture.desktop import App
-from scopecapture.i18n import ENGLISH, error_text, translate
+from scopecapture.i18n import ENGLISH, default_language, error_text, translate
 
 
 class TranslationTests(unittest.TestCase):
+    def test_windows_ui_language_takes_priority_over_regional_locale(self):
+        cases = ((0x0404, "en_US", "zh_TW"),
+                 (0x0C04, "en_US", "zh_TW"),
+                 (0x0804, "en_US", "zh_TW"),
+                 (0x0409, "Chinese (Traditional)_Taiwan", "en"),
+                 (0x0411, "zh_TW", "en"))
+        for language_id, regional_locale, expected in cases:
+            with self.subTest(language_id=language_id), patch("scopecapture.i18n.sys.platform", "win32"), patch("scopecapture.i18n.ctypes.windll", create=True) as dll, patch("scopecapture.i18n.locale.getlocale", return_value=(regional_locale, "UTF-8")) as regional:
+                dll.kernel32.GetUserDefaultUILanguage.return_value = language_id
+                self.assertEqual(default_language(), expected)
+                dll.kernel32.GetUserDefaultUILanguage.assert_called_once_with()
+                regional.assert_not_called()
+
+    def test_locale_fallback_handles_windows_chinese_names(self):
+        cases = (("Chinese (Traditional)_Taiwan", "zh_TW"),
+                 ("zh_TW", "zh_TW"), ("zh-TW", "zh_TW"),
+                 ("en_US", "en"), (None, "en"))
+        for name, expected in cases:
+            with self.subTest(locale=name), patch("scopecapture.i18n.sys.platform", "win32"), patch("scopecapture.i18n.ctypes.windll", create=True) as dll, patch("scopecapture.i18n.locale.getlocale", return_value=(name, "UTF-8")):
+                dll.kernel32.GetUserDefaultUILanguage.side_effect = OSError("unavailable")
+                self.assertEqual(default_language(), expected)
+        with patch("scopecapture.i18n.sys.platform", "linux"), patch("scopecapture.i18n.locale.getlocale", side_effect=ValueError("unknown locale")):
+            self.assertEqual(default_language(), "en")
+
+    def test_first_run_uses_ui_language_and_saved_choice_is_preserved(self):
+        for settings, expected in (({}, "zh_TW"), ({"language": "en"}, "en"), ({"language": "zh_TW"}, "zh_TW")):
+            with self.subTest(settings=settings), patch("scopecapture.i18n.sys.platform", "win32"), patch("scopecapture.i18n.ctypes.windll", create=True) as dll, patch("scopecapture.desktop.load_settings", return_value=settings), patch("scopecapture.desktop.save_settings"), patch("scopecapture.desktop.suggested_networks", return_value=[]):
+                dll.kernel32.GetUserDefaultUILanguage.return_value = 0x0404
+                root = tk.Tk()
+                root.withdraw()
+                try:
+                    app = App(root, persist=False)
+                    self.assertEqual(app.language, expected)
+                    self.assertEqual(app.capture_button.cget("text"), "擷取截圖" if expected == "zh_TW" else "Capture screenshot")
+                finally:
+                    root.destroy()
+
     def test_backend_errors_have_english_messages_and_matching_placeholders(self):
         tree = ast.parse((Path(__file__).resolve().parents[1] / "scopecapture" / "desktop_core.py").read_text(encoding="utf-8"))
         for node in ast.walk(tree):
